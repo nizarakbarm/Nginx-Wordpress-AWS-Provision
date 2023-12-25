@@ -6,4 +6,5 @@ terraform {
       name = "Nginx-Wordpress-AWS-Provision"
     }
   }
+  required_version = "~> 1.6.0"
 }
