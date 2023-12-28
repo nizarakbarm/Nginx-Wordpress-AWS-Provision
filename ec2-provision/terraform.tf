@@ -9,7 +9,7 @@ terraform {
     organization = "findnull"
 
     workspaces {
-      name = "Nginx-Wordpress-AWS-Provision"
+      name = "Nginx-Wordpress-AWS-Provision-CLI"
     }
   }
   required_providers {
