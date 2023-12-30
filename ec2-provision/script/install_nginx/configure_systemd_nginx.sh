@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat <<EOF >>"/etc/systemd/system/nginx.service"
+cat <<EOF >"/etc/systemd/system/nginx.service"
 [Unit]
 Description=nginx - high performance web server
 Documentation=https://nginx.org/en/docs/

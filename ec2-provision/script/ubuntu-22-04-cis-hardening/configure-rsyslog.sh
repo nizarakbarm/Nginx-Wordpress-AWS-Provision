@@ -5,9 +5,9 @@ PACKAGE="rsyslog"
 
 # Check if the package is installed
 if ! dpkg-query -W -f='${Status}' "$PACKAGE" 2>/dev/null | grep -q "ok installed"; then
-    # If the package is not installed, install it using apt
-    apt update
-    apt install -y "$PACKAGE"
+    # If the package is not installed, install it using apt -y
+    apt -y update
+    apt -y install -y "$PACKAGE"
 fi
 
 # Enable the rsyslog service

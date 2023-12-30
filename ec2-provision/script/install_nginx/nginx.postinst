@@ -7,7 +7,24 @@ if [ "$1" != "configure" ]; then
 fi
 
 # create directory for ssl
-mkdir /etc/nginx/ssl
+if [ ! -d /etc/nginx/ssl ]; then
+    mkdir /etc/nginx/ssl
+fi
+
+#linking modules directory
+if [ ! -d "/etc/nginx/modules" ] || [ ! -L "/etc/nginx/modules" ]; then
+    ln -s /usr/lib/nginx/modules /etc/nginx
+fi
+
+# create directory for vhost
+if [ ! -d /etc/nginx/sites-available ]; then
+    mkdir /etc/nginx/sites-available
+    chmod 755 /etc/nginx/sites-available
+fi
+if [ ! -d /etc/nginx/sites-enabled ]; then
+    mkdir /etc/nginx/sites-enabled
+    chmod 755 /etc/nginx/sites-enabled
+fi
 
 # CIS Nginx 2.3.1: ensure nginx directories owned by root user and root group
 if [[ $(stat -c "%U:%G" /etc/nginx) != "root:root" ]]; then
@@ -19,10 +36,11 @@ if [ -n $(find /etc/nginx -type d -exec stat -Lc "%n %a" {} + | grep -v 755) ]; 
 fi
 
 # CIS Nginx 2.3.4: ensure the nginx process ID file is secured
-if [ -n $(pgrep -f nginx) ] && [ -z $(stat -L -c "%U:%G"  /var/run/nginx.pid && stat -L -c "%a" /var/run/nginx.pid | tr 
-"\n" "," | grep "root:root,644," )  ]; then
-    chown root:root /var/run/nginx.pid
-    chmod u-x,go-wx /var/run/nginx.pid
+if [ -f "/var/run/nginx.pid" ]; then
+    if [ -n "$(pgrep -f nginx)" ] && [ -z "$(stat -L -c "%U:%G"  /var/run/nginx.pid && stat -L -c "%a" /var/run/nginx.pid | tr  "\n" "," | grep "root:root,644," )"  ]; then
+        chown root:root /var/run/nginx.pid
+        chmod u-x,go-wx /var/run/nginx.pid
+    fi
 fi
 
 # function used to check subdir inside /var/cache/nginx
@@ -71,6 +89,15 @@ if [ -z "$2" ]; then
         fi
     fi
 fi
+
+if [ ! -d "/usr/share/nginx" ]; then
+    mkdir /usr/share/nginx
+    chown root:root /usr/share/nginx
+    chmod 755 /usr/share/nginx
+fi
+
+#remove all .default config
+rm -f /etc/nginx/*.default
 
 #if [ -x "/etc/init.d/nginx" ]; then
 #    if [ -f "/var/run/nginx.pid" ] && kill -0 `cat /var/run/nginx.pid` >/dev/null; then

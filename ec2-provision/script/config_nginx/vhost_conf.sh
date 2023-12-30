@@ -1,9 +1,11 @@
 #!/bin/bash
 
+#set -x
+
 print_help() {
     echo ""
     echo "Setup WP"
-    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>]"
+    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>] [-e|--email <email>]"
     echo ""
 }
 while test -n "$1"; do
@@ -24,6 +26,14 @@ while test -n "$1"; do
             DOMAIN_NAME=$2
             shift
             ;;
+		--email)
+			EMAIL=$2
+			shift
+			;;
+		-e)
+			EMAIL=$2
+			shift
+			;;
         *)
             echo "Unknown argument: $1"
             print_help
@@ -38,6 +48,7 @@ if [ -z "$DOMAIN_NAME" ]; then
     exit 1
 fi
 
+
 DOC_ROOT="/usr/share/nginx/$DOMAIN_NAME"
 #create document root directory for vhost
 if [ ! -d "$DOC_ROOT" ]; then
@@ -46,13 +57,21 @@ fi
 
 # setup wp secure for nginx
 wp --path="$DOC_ROOT" secure block-access all --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
-wp --path="$DOC_ROOT" secure block-author-scanning --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
+#wp --path="$DOC_ROOT" secure block-author-scanning --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
 wp --path="$DOC_ROOT" secure block-php-execution all --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
-wp --path="$DOC_ROOT" secure disable-directory-browsing --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
-chown root:root /etc/nginx/wp-secure.conf && chmod 755 /etc/nginx/wp-secure.conf
+#wp --path="$DOC_ROOT" secure disable-directory-browsing --server=nginx --file-path=/etc/nginx/wp-secure.conf --allow-root
+chown root:root /etc/nginx/wp-secure.conf && chmod 644 /etc/nginx/wp-secure.conf
+
+./install_ssl_certbot.sh "$DOMAIN_NAME" "$EMAIL"
+# if [[ $? -ne 0 ]]; then
+# 	echo "Warning: install ssl certbot script fail!"
+# 	exit 1
+# fi
+
+poolname=$(echo "$DOMAIN_NAME" | cut -d"." -f1)
 
 #create vhost conf with the specified domain in  sites-available
-cat <<EOF> /etc/nginx/sites-available/"$DOMAIN_NAME.conf"
+cat <<EOF>/etc/nginx/sites-available/"$DOMAIN_NAME.conf"
 include /etc/nginx/define_fastcgi_cache.conf;
 include /etc/nginx/map_webp.conf;
 server {
@@ -65,7 +84,7 @@ server {
 server {
 	listen 443 quic reuseport;
 	listen 443 ssl;
-        http2 on;
+    http2 on;
 
 
 	server_name $DOMAIN_NAME;
@@ -86,6 +105,13 @@ server {
 		add_header alt-svc 'quic=":443"';
 		
 		add_header Alt-Svc 'h3=":443"; ma=86400';
+
+		# disable directory indexing
+		autoindex off;
+		# block author scanning
+		if (\$query_string ~ "author=\d+"){
+        	return 403;
+    	}
 	}
 
 	location ~ \.php\$ {
@@ -94,7 +120,7 @@ server {
 		include fastcgi_params;
 		
 		fastcgi_split_path_info ^(.+\\\\.php)(/.+)\$;
-		fastcgi_pass unix:/var/run/php8.1-fpm-wp2.sock;
+		fastcgi_pass unix:/var/run/php8.1-fpm-$poolname.sock;
 		fastcgi_param SCRIPT_FILENAME \$document_root/\$fastcgi_script_name;
 		#fastcgi_index index.php;
 		fastcgi_cache_bypass \$skip_cache;
@@ -113,13 +139,15 @@ server {
 	}
     # WebP
 	location ~* ^/.+\.(png|gif|jpe?g)\$ {
-		expires max;
+		#expires max;
+		add_header Cache-Control "max-age=604800, must-revalidate";
 		try_files \$uri\$webp_suffix \$uri =404;
 		#add_header Alt-Svc 'h3=":443"; ma=86400';
 	}
 
 	location ~* (ogg|ogv|svg|svgz|eot|otf|woff|webp|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bpm|rtf)\$ {
-		expires max;
+		#expires max;
+		add_header Cache-Control "max-age=604800, must-revalidate";
 
 		#add_header Alt-Svc 'h3=":443"; ma=86400';
 		log_not_found off;
@@ -155,4 +183,9 @@ if [[ $nginx_test =~ ok || $nginx_test =~ successful ]]; then
 else
     echo "Error: configuration error and nginx test is not successful! Check configuration again"
     exit 1
+fi
+
+if [ -d "/etc/letsencrypt/live/$DOMAIN_NAME" ]; then
+	echo "Warning: SSL still not installed for $DOMAIN_NAME"
+	exit 1
 fi

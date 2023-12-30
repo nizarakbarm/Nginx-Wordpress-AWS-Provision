@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # overwrite fastcgi_params
-cat <<EOF>fastcgi_params
+cat <<EOF>/etc/nginx/fastcgi_params
 fastcgi_param  QUERY_STRING       \$query_string;
 fastcgi_param  REQUEST_METHOD     \$request_method;
 fastcgi_param  CONTENT_TYPE       \$content_type;
@@ -29,7 +29,7 @@ fastcgi_param  REDIRECT_STATUS    200;
 EOF
 
 #overwrite mime.types file
-cat <<EOF>mime.types
+cat <<EOF>/etc/nginx/mime.types
 
 types {
     text/html                                        html htm shtml;

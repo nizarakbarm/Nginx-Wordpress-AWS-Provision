@@ -32,7 +32,7 @@ if ! getent passwd $pool_name >/dev/null; then
     $pool_name  >/dev/null
 fi
 
-cat <<EOF>"$pool_name.conf"
+cat <<EOF>"/etc/php/8.1/fpm/pool.d/$pool_name.conf"
 [$pool_name]
 user = $pool_name
 group = $pool_name
@@ -60,8 +60,8 @@ else
     exit 1
 fi
 
-systemctl restart php-8.1-fpm
-if [[ ! $? -ne 0 ]]; then
+systemctl restart php8.1-fpm
+if [[ $? -ne 0 ]]; then
     echo "Warning: restart php-fpm failed!"
     exit 1
 fi

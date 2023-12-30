@@ -1,9 +1,11 @@
 #!/bin/bash
 
+#set -x
+
 print_help() {
     echo ""
     echo "Setup WP"
-    echo "Usage: $PROGNAME [-s|--setup-vhost <domain_name> ]"
+    echo "Usage: $PROGNAME [-s|--setup-vhost <domain_name>] [-e|--email <email>]"
     echo ""
 }
 while test -n "$1"; do
@@ -24,6 +26,14 @@ while test -n "$1"; do
             DOMAIN_NAME=$2
             shift
             ;;
+        --email)
+			EMAIL=$2
+			shift
+			;;
+		-e)
+			EMAIL=$2
+			shift
+			;;
         *)
             echo "Unknown argument: $1"
             print_help
@@ -33,6 +43,11 @@ while test -n "$1"; do
     shift
 done
 
+EXIT_CODE=0
+
+if [[ ! $PWD =~ "/root/script/config_nginx$" ]]; then
+    cd /root/script/config_nginx
+fi
 
 . ./all_params_file.sh
 
@@ -44,7 +59,7 @@ done
 . ./fastcgi_cache_conf.sh
 
 if [ -n "$DOMAIN_NAME" ]; then
-    ./vhost_congf.sh -d "$DOMAIN_NAME"
+    ./vhost_conf.sh -d "$DOMAIN_NAME" -e "$EMAIL"
 fi
 
 . ./nginx_main_conf.sh
@@ -54,14 +69,17 @@ if [[ $nginx_test =~ ok || $nginx_test =~ successful ]]; then
     echo "Info: The configuration is ok and Nginx test successful"
     # After know that test successfull, activate vhost
     systemctl restart nginx
-    if [[ ! $? -ne 0 ]]; then
+    if [[ $? -ne 0 ]]; then
         echo "Warning: restart NGINX failed!"
-        exit 1
+        EXIT_CODE=1
+        exit $EXIT_CODE
     fi
-fi
 else
     echo "Error: configuration error and nginx test is not successful! Check configuration again"
-    exit 1
+    EXIT_CODE=1
+    exit $EXIT_CODE
 fi
 
-exit 0
+#cd ..
+
+exit $EXIT_CODE

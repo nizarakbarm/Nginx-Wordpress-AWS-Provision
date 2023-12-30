@@ -32,7 +32,7 @@ resource "aws_security_group" "vm_security_group" {
     vpc_id = data.aws_vpc.default.id
 }
 
-resource "aws_security_group_rule" "name" {
+resource "aws_security_group_rule" "ingress" {
     count = length(var.sg_ingress_rules)
 
     type = "ingress"
@@ -42,6 +42,18 @@ resource "aws_security_group_rule" "name" {
     protocol = var.sg_ingress_rules[count.index].protocol
     cidr_blocks = [var.sg_ingress_rules[count.index].cidr_blocks]
     description =  var.sg_ingress_rules[count.index].description
+}
+
+resource "aws_security_group_rule" "engress" {
+    count = length(var.sg_engress_rules)
+
+    type = "egress"
+    security_group_id = aws_security_group.vm_security_group.id
+    from_port = var.sg_engress_rules[count.index].from_port
+    to_port = var.sg_engress_rules[count.index].to_port
+    protocol = var.sg_engress_rules[count.index].protocol
+    cidr_blocks = [var.sg_engress_rules[count.index].cidr_blocks]
+    description =  var.sg_engress_rules[count.index].description
 }
 
 resource "aws_instance" "vm_server" {

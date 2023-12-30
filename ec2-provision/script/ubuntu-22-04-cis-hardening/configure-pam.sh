@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt install libpam-pwquality
+apt -y install libpam-pwquality
 # change password lenght required
 sed -i 's/^#minlen = 8/minlen = 14/' /etc/security/pwquality.conf
 # change complexity required

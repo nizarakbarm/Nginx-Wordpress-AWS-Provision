@@ -37,3 +37,29 @@ variable "sg_ingress_rules" {
       }, 
     ]
 }
+
+variable "sg_engress_rules" {
+    type = list(object({
+        from_port     = number
+        to_port       = number
+        protocol      = string
+        cidr_blocks   = string
+        description   = string
+    }))
+    default = [ 
+      {
+        description   = "Port HTTP"
+        from_port     = 80
+        to_port       = 80
+        cidr_blocks    = "0.0.0.0/0"
+        protocol      = "TCP"
+      },
+      {
+        description   = "Port HTTPS"
+        from_port     = 443
+        to_port       = 443
+        cidr_blocks    = "0.0.0.0/0"
+        protocol      = "TCP"
+      },
+    ]
+}

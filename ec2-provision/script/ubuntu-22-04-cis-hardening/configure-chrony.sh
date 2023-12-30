@@ -30,11 +30,11 @@ check_time () {
 # check the time daemon already in use
 check_time
 # install chrony time daemon and remove the others
-apt install chrony
+apt -y install chrony
 systemctl stop systemd-timesyncd.service
 systemctl --now mask systemd-timesyncd.service
 systemctl --now enable chrony.service
-apt purge ntp
+apt -y purge ntp
 
 # Set the file path
 FILE="/etc/chrony/chrony.conf"

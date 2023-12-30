@@ -16,7 +16,7 @@ for PACKAGE in "${PACKAGES[@]}"; do
                 ;;
         esac
 
-        # Purge the package using apt
-        apt purge -y "$PACKAGE"
+        # Purge the package using apt -y
+        apt -y purge -y "$PACKAGE"
     fi
 done

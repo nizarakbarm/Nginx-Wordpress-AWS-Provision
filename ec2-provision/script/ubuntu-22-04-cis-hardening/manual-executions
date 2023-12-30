@@ -19,7 +19,7 @@ verification:
 
 1.8 Ensure updates, patches, and additional security software are installed
     its just:
-        sudo apt update && sudo apt upgrade
+        sudo apt -y update && sudo apt -y upgrade
     ======================================================================
 
 2.1.1 Ensure chargen services are not enabled

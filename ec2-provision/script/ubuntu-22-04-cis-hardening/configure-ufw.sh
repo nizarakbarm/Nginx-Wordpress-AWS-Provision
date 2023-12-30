@@ -5,9 +5,9 @@ PACKAGE="ufw"
 
 # Check if the package is installed
 if ! dpkg-query -W -f='${Status}' "$PACKAGE" 2>/dev/null | grep -q "ok installed"; then
-    # If the package is not installed, install it using apt
-    apt update
-    apt install -y "$PACKAGE"
+    # If the package is not installed, install it using apt -y
+    apt -y update
+    apt -y install -y "$PACKAGE"
 fi
 
 # Set the iptables-persistent package name
@@ -15,8 +15,8 @@ IPTABLES_PACKAGE="iptables-persistent"
 
 # Check if the iptables-persistent package is installed
 if dpkg-query -W -f='${Status}' "$IPTABLES_PACKAGE" 2>/dev/null | grep -q "ok installed"; then
-    # If the iptables-persistent package is installed, purge it using apt
-    apt purge -y "$IPTABLES_PACKAGE"
+    # If the iptables-persistent package is installed, purge it using apt -y
+    apt -y purge -y "$IPTABLES_PACKAGE"
 fi
 
 # Check if the ufw service is enabled and active, and if ufw itself is active

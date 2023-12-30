@@ -1,4 +1,4 @@
-#!/bin/bash
+c#!/bin/bash
 
 # Set the package names
 PACKAGES=("auditd" "audispd-plugins")

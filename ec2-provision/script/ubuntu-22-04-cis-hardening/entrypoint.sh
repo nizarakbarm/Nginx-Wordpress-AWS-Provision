@@ -19,8 +19,8 @@ bash ./special-purpose-services.sh
 bash ./configure-cron.sh
 bash ./configure-chrony.sh
 bash ./configure-pam.sh
-bash ./configure-ufw.sh
+# bash ./configure-ufw.sh
 bash ./configure-pam.sh
-bash ./configure-rsyslog.sh
-bash ./configure-auditd.sh
-bash ./check-reboot.required.sh
+# bash ./configure-rsyslog.sh
+# bash ./configure-auditd.sh
+# bash ./check-reboot.required.sh

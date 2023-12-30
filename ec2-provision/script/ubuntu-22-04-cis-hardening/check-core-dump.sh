@@ -3,8 +3,8 @@
 # Check if systemd-coredump is installed
 if ! systemctl is-enabled coredump.service; then
     # Update package lists and install systemd-coredump
-    apt update
-    apt install systemd-coredump
+    apt -y update
+    apt -y install systemd-coredump
 fi
 
 # Create /etc/security/limits.d/coredump with the specified content
