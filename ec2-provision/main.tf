@@ -4,6 +4,26 @@ variable "public_key" {
     default = ""
     sensitive = true
 }
+variable "domain_name" {
+    type = string
+    default = ""
+    sensitive = true
+}
+variable "sub_domain_name" {
+    type = string
+    default = ""
+    sensitive = true
+}
+variable "cloudflare_token" {
+    type = string
+    default = ""
+    sensitive = true
+}
+
+provider "cloudflare" {
+    api_token = var.cloudflare_token
+}
+
 data "aws_ami" "ubuntu" {
     most_recent = true
     owners = [ "amazon" ]
@@ -62,6 +82,7 @@ resource "aws_instance" "vm_server" {
     key_name = aws_key_pair.vm_key.key_name
     vpc_security_group_ids = [ aws_security_group.vm_security_group.id ]
     associate_public_ip_address = true
+
     user_data = <<EOF
 #!/bin/bash
 
@@ -79,4 +100,29 @@ EOF
         App = "Wordpress"
     }
     
+}
+
+#get zone id
+data "cloudflare_zone" "get_zone_info" {
+    name = var.domain_name
+}
+
+#check if record exist
+data "cloudflare_record" "domain_name" {
+    hostname = "${var.sub_domain_name}.${var.domain_name}"
+    zone_id = data.cloudflare_zone.get_zone_info.zone_id
+}
+
+resource "cloudflare_record" "domain_name" {
+    name = var.sub_domain_name
+    zone_id = data.cloudflare_zone.get_zone_info.zone_id
+    value = aws_instance.vm_server.public_ip
+    type = "A"
+    allow_overwrite = true
+
+    depends_on = [ aws_instance.vm_server ]
+}
+
+output "public_ip_ec2" {
+  value = aws_instance.vm_server.public_ip
 }
