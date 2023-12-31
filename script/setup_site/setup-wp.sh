@@ -3,7 +3,7 @@
 print_help() {
     echo ""
     echo "Setup WP"
-    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>] [--url <url>] [-ud|--user_db <user_db>] [-pd|--pass_db <pass_db>] [-db|--dbname <db_name>] [-t|--title <title>] [-u|--admin_user <admin_user>] [-p|--admin_pass <admin_pass>] [e|--admin_email <admin_email>] "
+    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>] [--url <url>] [-ud|--user_db <user_db>] [-pd|--pass_db <pass_db>] [-db|--dbname <db_name>] [-t|--title <title>] [-u|--admin_user <admin_user>] [-p|--admin_pass <admin_pass>] [e|--admin_email <admin_email>] [t|--github-token <github-token>]"
     echo ""
 }
 while test -n "$1"; do
@@ -84,6 +84,14 @@ while test -n "$1"; do
             admin_email="$2"
             shift
             ;;
+        --github-token)
+            GITHUB_TOKEN="$2"
+            shift
+            ;;
+        -t)
+            GITHUB_TOKEN="$2"
+            shift
+            ;;
         *)
             echo "Unknown argument: $1"
             print_help
@@ -128,12 +136,12 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-#export COMPOSER_ALLOW_SUPERUSER=1
-#composer config -n -g github-oauth.github.com $GITHUB_OAUTH_TOKEN
+export COMPOSER_ALLOW_SUPERUSER=1
+composer config -n -g github-oauth.github.com $GITHUB_TOKEN
 # install  wp-cli-secure and disable-file-editor using wp-secure
 wp --path="$WP_DIR" package install https://github.com/igorhrcek/wp-cli-secure-command.git --allow-root
-#composer config -n -g --unset github-oauth.github.com
-#unset COMPOSER_ALLOW_SUPERUSER
+composer config -n -g --unset github-oauth.github.com
+unset COMPOSER_ALLOW_SUPERUSER
 wp --path="$WP_DIR" secure disable-file-editor --allow-root
 
 #chown www-data:www-data $WP_DIR -R

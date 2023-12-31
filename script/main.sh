@@ -6,7 +6,7 @@ ERROR_MESSAGE="Failed to"
 print_help() {
     echo ""
     echo "Provision Nginx, php-fpm, and wordpress"
-    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>] [-r|rooot-password <root-password>] [-ud|--user_db <user_db>] [-db|--dbname <db_name>] [-t|--title <title>] [-u|--admin_user <admin_user>] [-p|--admin_pass <admin_pass>] [e|--admin_email <admin_email>] "
+    echo "Usage: $PROGNAME [-d|--domain-name <domain-name>] [-r|rooot-password <root-password>] [-ud|--user_db <user_db>] [-db|--dbname <db_name>] [-t|--title <title>] [-u|--admin_user <admin_user>] [-p|--admin_pass <admin_pass>] [-e|--admin_email <admin_email>] [-t|--github-token <github-token>]"
     echo ""
 }
 while test -n "$1"; do
@@ -83,6 +83,14 @@ while test -n "$1"; do
             EMAIL="$2"
             shift
             ;;
+        --github-token)
+            GITHUB_TOKEN="$2"
+            shift
+            ;;
+        -t)
+            GITHUB_TOKEN="$2"
+            shift
+            ;;
         *)
             echo "Unknown argument: $1"
             print_help
@@ -150,7 +158,7 @@ PASSWORD_DB="$(./mysql_and_php_dependencies/mysql_and_php.sh -u "$USERNAME_DB" -
 ./setup_site/install-wp-cli.sh
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Install wp-cli] "
 
-./setup_site/setup-wp.sh -d "$DOMAIN_NAME" --url "https://$DOMAIN_NAME" -ud "$USERNAME_DB" -pd "$PASSWORD_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL"
+./setup_site/setup-wp.sh -d "$DOMAIN_NAME" --url "https://$DOMAIN_NAME" -ud "$USERNAME_DB" -pd "$PASSWORD_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL" -t "$GITHUB_TOKEN"
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Setup WP using wp-cli] "
 
 

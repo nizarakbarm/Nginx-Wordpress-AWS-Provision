@@ -130,7 +130,8 @@ script/main.sh \
 -d [DOMAIN_NAME] -r [ROOT_PASSWORD] \
 -ud [USERNAME_DB] -db "$DB_NAME" \
 -t [TITLE] -u [USERNAME] \
--p [PASSWORD] -e [EMAIL] > /root/log_installation 2>&1
+-p [PASSWORD] -e [EMAIL]
+-t [GITHUB_TOKEN] > /root/log_installation 2>&1
 ```
   with some argument:
   - [DOMAIN_NAME] : Domain Name for Wordpress
