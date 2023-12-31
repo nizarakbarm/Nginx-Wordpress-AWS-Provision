@@ -45,9 +45,9 @@ jobs:
             run: terraform init
             id: init
           - id: plan
-            run: terraform plan -var public_key=$PUBLIC_KEY -var domain_name=$DOMAIN_NAME_FOR_CF -var sub_domain_name=$SUBDOMAIN_PART_FOR_CF -var cloudflare_token=$CLOUDFLARE_TOKEN -no-color
+            run: terraform plan -var="public_key=$PUBLIC_KEY" -var="domain_name=$DOMAIN_NAME_FOR_CF" -var="sub_domain_name=$SUBDOMAIN_PART_FOR_CF" -var="cloudflare_token=$CLOUDFLARE_TOKEN" -no-color -input=false
           - id: apply
-            run: terraform apply -auto-approve -var public_key=$PUBLIC_KEY -var domain_name=$DOMAIN_NAME_FOR_CF -var sub_domain_name=$SUBDOMAIN_PART_FOR_CF -var cloudflare_token=$CLOUDFLARE_TOKEN-no-color
+            run: terraform apply -auto-approve -var="public_key=$PUBLIC_KEY" -var="domain_name=$DOMAIN_NAME_FOR_CF" -var="sub_domain_name=$SUBDOMAIN_PART_FOR_CF" -var="cloudflare_token=$CLOUDFLARE_TOKEN" -no-color -input=false
           - id: public_ip
             run: terraform output public_ip_ec2
           - name: Update PR
