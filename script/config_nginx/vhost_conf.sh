@@ -185,7 +185,7 @@ else
     exit 1
 fi
 
-if [ -d "/etc/letsencrypt/live/$DOMAIN_NAME" ]; then
+if [ ! -d "/etc/letsencrypt/live/$DOMAIN_NAME" ]; then
 	echo "Warning: SSL still not installed for $DOMAIN_NAME"
 	exit 1
 fi
