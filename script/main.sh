@@ -166,7 +166,7 @@ PASSWORD_DB="$(./mysql_and_php_dependencies/mysql_and_php.sh -u "$USERNAME_DB" -
 ./config_nginx/conf_nginx.sh -s "$DOMAIN_NAME" -e "$EMAIL"
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Config NGINX] "
 
-./conf_php_fpm/setup_pool_conf.sh $DOMAIN_NAME
+./conf_php_fpm/setup_pool_conf.sh "$DOMAIN_NAME"
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Setup FPM Pool] "
 
 

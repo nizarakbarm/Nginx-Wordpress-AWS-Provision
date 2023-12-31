@@ -2,10 +2,11 @@
 
 #$! is DOMAIN_NAME
 
-pool_name=$(echo $DOMAIN_NAME | cut -d"." -f1)
+pool_name=$(echo "$DOMAIN_NAME" | cut -d"." -f1)
 doc_root=/usr/share/nginx/$DOMAIN_NAME
 
-if [ -z $pool_name ]; then
+if [ -z "$pool_name" ]; then
+    echo "$pool_name"
     echo "Warning: pool_name is empty or not defined!"
     exit 1
 fi
