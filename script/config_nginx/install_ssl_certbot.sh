@@ -7,7 +7,7 @@
 domain="$1"
 email="$2"
 
-if [ -n $(pgrep -f nginx) ]; then
+if [ -n "$(pgrep -f nginx)" ]; then
     systemctl stop nginx
 fi
 
