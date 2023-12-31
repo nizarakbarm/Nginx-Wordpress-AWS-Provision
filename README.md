@@ -74,6 +74,11 @@ Technology stack needed for this:
 # Installation
 
 - Download terraform script from ec2-provision
+```
+curl -o Nginx-Wordpress-AWS-Provision-v0.1.tar.gz https://github.com/nizarakbarm/Nginx-Wordpress-AWS-Provision/archive/refs/tags/v0.1.tar.gz
+tar xvfz Nginx-Wordpress-AWS-Provision-v0.1.tar.gz
+cd Nginx-Wordpress-AWS-Provision-v0.1/ec2-provision
+```
 
 - Download provision script from script by using this command:
 
@@ -84,9 +89,11 @@ Technology stack needed for this:
         ```
         sudo su # if you are not in root
         cd /root
-        wget [url_script]
-        chown root:root script -R
-        find /root/script -type f -exec chmod 755 {} +
+        curl -o Nginx-Wordpress-AWS-Provision-v0.1.tar.gz https://github.com/nizarakbarm/Nginx-Wordpress-AWS-Provision/archive/refs/tags/v0.1.tar.gz
+        tar xvfz Nginx-Wordpress-AWS-Provision-v0.1.tar.gz
+        sudo mv Nginx-Wordpress-AWS-Provision-v0.1/script /root
+        sudo chown root:root script -R
+        sudo find /root/script -type f -exec chmod 755 {} +
         ```
 
 # Usage
@@ -126,7 +133,7 @@ Technology stack needed for this:
 Run this command:
 
 ```
-script/main.sh \
+/root/script/main.sh \
 -d [DOMAIN_NAME] -r [ROOT_PASSWORD] \
 -ud [USERNAME_DB] -db "$DB_NAME" \
 -t [TITLE] -u [USERNAME] \
@@ -142,6 +149,7 @@ script/main.sh \
   - [USERNAME]: Username admin for Wordpress
   - [PASSWORD]: Admin password for Wordpress
   - [EMAIL]: Email password for Wordpress
+  - [GITHUB_TOKEN]: GITHUB_TOKEN needed for wp package install
 
 If you want to provision ec2 and Nginx-Wordpress-PHP by using github action you can check my github action inside .github/workflows/ci-provision.yml.
 
