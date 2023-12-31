@@ -117,8 +117,6 @@ jobs:
             - name: ssh agent
               run: |
                 eval `ssh-agent`
-            - name: add private key
-              run: |
                 ssh-add - <<< "${S_KEY}"
             - name: rsync and deploy
               run: |
