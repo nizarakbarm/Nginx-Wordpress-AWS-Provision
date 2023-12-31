@@ -125,7 +125,8 @@ jobs:
                 chmod 600 ~/.ssh/known_hosts
                 ls -l ~/.ssh/known_hosts
                 rsync -avzqR script -e "ssh -p ${PORT_SSH}" "$USERNAME_VM@$PUBLIC_IP:~/"
-                [[ $? -ne 0 ]] && echo "Warning: rsync failed!"
+                [[ $? -ne 0 ]] && echo "Warning: rsync failed!" 
+                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo rm -rf /root/script" > /dev/null 2>&1
                 ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo mv script /root"
                 [[ $? -ne 0 ]] && echo "Warning: ssh executing mv failed!"
                 ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo chown root:root /root/script -R"
