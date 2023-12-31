@@ -119,6 +119,8 @@ jobs:
                 eval `ssh-agent`
                 ssh-add - <<< "${S_KEY}"
                 echo "Appending ssh-keyscan result to known-hsots"
+                mkdir ~/.ssh
+                chmod 700 ~/.ssh
                 ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP >> ~/.ssh/known_hosts
             - name: rsync script
               shell: bash -c "${0}"
