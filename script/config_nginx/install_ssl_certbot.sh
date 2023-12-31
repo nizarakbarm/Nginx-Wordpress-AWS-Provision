@@ -32,4 +32,4 @@ if [ ! -f "/usr/local/bin/certbot" ]; then
         pip --no-cache-dir install certbot
     fi
 fi
-/usr/local/bin/certbot certonly --standalone -d "$domain" -n --force-renewal --agree-tos --email "$email" >/dev/null 2>&1
+/usr/local/bin/certbot certonly --standalone -d "$domain" -n --force-renewal --agree-tos --email "$email" > /var/log/certbot.log
