@@ -15,7 +15,7 @@ on:
 jobs:
     terraform:
         env:
-          PUBLIC_KEY: ${{ secrets.PUB_KEY }}
+          PUBLIC_KEY: ${{ secrets.P_KEY }}
           TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
           TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
           TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
@@ -36,7 +36,7 @@ jobs:
           - name: Checkout
             uses: actions/checkout@v4
           - name: Setup Terraform
-            uses: hashicorp/setup-terraform@v3v1.6.3
+            uses: hashicorp/setup-terraform@v3
             with:
               terraform_version: "1.6.3"
               cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
