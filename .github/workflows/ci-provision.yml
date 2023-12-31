@@ -108,6 +108,7 @@ jobs:
             DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
             TITLE: ${{ vars.TITLE }}
             EMAIL: ${{ secrets.EMAIL }}
+            COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           permissions:
             contents: read
             pull-requests: write
