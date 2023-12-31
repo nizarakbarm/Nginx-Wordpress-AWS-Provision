@@ -1,5 +1,6 @@
 #!/bin/bash
 
+EXIT_CODE=0
 if [[ ! $PWD =~ "/root/script/install_nginx$" ]]; then
     cd /root/script/install_nginx
 fi
