@@ -136,7 +136,7 @@ jobs:
                 [[ $? -ne 0 ]] && echo "Warning: ssh executing chown failed!"
                 ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo find /root/script -type f -exec chmod 755 {} +"
                 [[ $? -ne 0 ]] && echo "Warning: ssh executing find failed!"
-                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP sudo /root/script/main.sh -d "$DOMAIN_NAME" -r "$ROOT_PASSWORD" -ud "$USERNAME_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL"
+                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP sudo /root/script/main.sh -d "$DOMAIN_NAME" -r "$ROOT_PASSWORD" -ud "$USERNAME_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL" -t "$GITHUB_TOKEN"
                 [[ $? -ne 0 ]] && echo "Warning: ssh executing script/main.sh failed!"
     test_curl:
       runs-on: ubuntu-latest
