@@ -122,9 +122,10 @@ jobs:
                 mkdir ~/.ssh
                 chmod 700 ~/.ssh
                 ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP >> ~/.ssh/known_hosts
+                chmod 600 ~/.ssh/known_hosts
             - name: rsync script
               run: |
-                ls ~/
+                ls -l ~/.ssh/known_hosts
                 rsync -avzqR script -e "ssh -p ${PORT_SSH}" "$USERNAME_VM@$PUBLIC_IP:~/"
     test_curl:
       runs-on: ubuntu-latest
