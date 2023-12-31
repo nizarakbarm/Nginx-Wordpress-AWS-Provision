@@ -123,7 +123,6 @@ jobs:
                 chmod 700 ~/.ssh
                 ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP >> ~/.ssh/known_hosts
             - name: rsync script
-              shell: bash -c "${0}"
               run: |
                 ls ~/
                 rsync -avzqR script -e "ssh -p ${PORT_SSH}" "$USERNAME_VM@$PUBLIC_IP:~/"
