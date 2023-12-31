@@ -114,13 +114,11 @@ jobs:
           steps:
             - name: Checkout
               uses: actions/checkout@v4
-            - name: ssh agent
+            - name: deploy using ssh or rsync
               run: |
                 eval `ssh-agent`
                 ssh-add - <<< "${S_KEY}"
-                ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP
-            - name: rsync and deploy
-              run: |
+                ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP > /dev/null 2>&1
                 rsync -avzqR script -e "ssh -p ${PORT_SSH}" $USERNAME_VM@$PUBLIC_IP:~/
                 [[ $? -ne 0 ]] && echo "Warning: rsync failed!"
                 ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo mv script /root"
