@@ -2,7 +2,7 @@
 
 sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
 sed -i "/#\$nrconf{kernelhints} = -1;/s/.*/\$nrconf{kernelhints} = -1;/" /etc/needrestart/needrestart.conf
-apt update -o Dpkg::Options::="--force-confold" --force-yes -y && apt upgrade -o Dpkg::Options::="--force-confold" --force-yes -y && apt install -y build-essential
+apt update -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --force-yes -y --allow-change-held-packages && apt upgrade -o -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold --force-yes -y --allow-change-held-packages && apt install -y build-essential
 apt install -y libpcre3-dev libssl-dev zlib1g-dev libxml2-dev libxslt1-dev libgd-dev libgeoip-dev
 sed -i "/\$nrconf{restart} = 'a';/s/.*/#\$nrconf{restart} = 'i';/" /etc/needrestart/needrestart.conf
 sed -i "/\$nrconf{kernelhints} = -1;/s/.*/#\$nrconf{kernelhints} = -1;/" /etc/needrestart/needrestart.conf
