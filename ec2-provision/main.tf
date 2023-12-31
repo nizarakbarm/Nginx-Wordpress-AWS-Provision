@@ -118,6 +118,7 @@ resource "cloudflare_record" "domain_name" {
     zone_id = data.cloudflare_zone.get_zone_info.zone_id
     value = aws_instance.vm_server.public_ip
     type = "A"
+    proxied = false
     allow_overwrite = true
 
     depends_on = [ aws_instance.vm_server ]
