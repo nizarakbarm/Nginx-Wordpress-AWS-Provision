@@ -2,3 +2,4 @@ secrets_vars.yml
 *.tar.gz
 .terraform*
 test_data
+*.original
