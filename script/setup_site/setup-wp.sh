@@ -88,10 +88,6 @@ while test -n "$1"; do
             GITHUB_TOKEN="$2"
             shift
             ;;
-        -t)
-            GITHUB_TOKEN="$2"
-            shift
-            ;;
         *)
             echo "Unknown argument: $1"
             print_help

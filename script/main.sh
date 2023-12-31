@@ -87,10 +87,6 @@ while test -n "$1"; do
             GITHUB_TOKEN="$2"
             shift
             ;;
-        -t)
-            GITHUB_TOKEN="$2"
-            shift
-            ;;
         *)
             echo "Unknown argument: $1"
             print_help
@@ -140,6 +136,11 @@ if [ -z "$ROOT_PASSWORD" ]; then
     exit 1
 fi
 
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "Warning: GITHUB_TOKEN is not defined!"
+    exit 1
+fi
+
 if [[  ! $PWD =~ "/root/script$" ]]; then
     cd /root/script
 fi
@@ -158,7 +159,7 @@ PASSWORD_DB="$(./mysql_and_php_dependencies/mysql_and_php.sh -u "$USERNAME_DB" -
 ./setup_site/install-wp-cli.sh
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Install wp-cli] "
 
-./setup_site/setup-wp.sh -d "$DOMAIN_NAME" --url "https://$DOMAIN_NAME" -ud "$USERNAME_DB" -pd "$PASSWORD_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL" -t "$GITHUB_TOKEN"
+./setup_site/setup-wp.sh -d "$DOMAIN_NAME" --url "https://$DOMAIN_NAME" -ud "$USERNAME_DB" -pd "$PASSWORD_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL" --github-token "$GITHUB_TOKEN"
 [[ $? -ne 0 ]] && EXIT_CODE=1 && ERROR_MESSAGE+=" [Setup WP using wp-cli] "
 
 
