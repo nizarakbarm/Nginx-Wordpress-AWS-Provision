@@ -107,11 +107,11 @@ data "cloudflare_zone" "get_zone_info" {
     name = var.domain_name
 }
 
-#check if record exist
-data "cloudflare_record" "domain_name" {
-    hostname = "${var.sub_domain_name}.${var.domain_name}"
-    zone_id = data.cloudflare_zone.get_zone_info.zone_id
-}
+# #check if record exist
+# data "cloudflare_record" "domain_name" {
+#     hostname = "${var.sub_domain_name}.${var.domain_name}"
+#     zone_id = data.cloudflare_zone.get_zone_info.zone_id
+# }
 
 resource "cloudflare_record" "domain_name" {
     name = var.sub_domain_name
