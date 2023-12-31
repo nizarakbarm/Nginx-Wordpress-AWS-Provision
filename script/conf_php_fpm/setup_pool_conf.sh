@@ -2,6 +2,7 @@
 
 #$! is DOMAIN_NAME
 
+DOMAIN_NAME="$1"
 pool_name=$(echo "$DOMAIN_NAME" | cut -d"." -f1)
 doc_root=/usr/share/nginx/$DOMAIN_NAME
 
