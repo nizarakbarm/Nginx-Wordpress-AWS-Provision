@@ -31,6 +31,8 @@ script is used for Nginx-Wordpress-PHP-MySQL provision inside ec2 vm. Nginx-Word
 
     - Block Directory Browsing
 
+- Using Nginx 1.25.3 Release which has Bug Fix for HTTP/2 Rapid Reset DDOS Attack Vulnerability
+
 Other than security best practice, the configuration is also optimized for perfomance, which is:
 
 - For MySQL:
