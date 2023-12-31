@@ -11,39 +11,27 @@ on:
             - 'release/**'
             - 'hotfix/**'
             - 'support/**'
-    push:
-        branches:
-            - develop
-            - 'feature/**'
-            - 'bugfix/**'
-            - 'release/**'
-            - 'hotfix/**'
-            - 'support/**'
-
-env:
-    TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
-    TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-    TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
-    CONFIG_DIRECTORY: "./"
-    CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
-    ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
-    DB_NAME: ${{ secrets.DB_NAME }}
-    USERNAME_DB: ${{ secrets.USERNAME_DB }}
-    USERNAME: ${{ secrets.USERNAME }}
-    PASSWORD: ${{ secrets.PASSWORD }}
-    DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-    TITLE: ${{ vars.TITLE }}
-    DOMAIN_NAME_FOR_CF: ${{ vars.DOMAIN_NAME_FOR_CF }}
-    SUBDOMAIN_PART_FOR_CF: ${{ vars.SUBDOMAIN_PART_FOR_CF }}
     
-
 jobs:
     terraform:
+        env:
+          PUBLIC_KEY: ${{ secrets.PUB_KEY }}
+          TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
+          TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+          TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+          DOMAIN_NAME_FOR_CF: ${{ vars.DOMAIN_NAME_FOR_CF }}
+          SUBDOMAIN_PART_FOR_CF: ${{ vars.SUBDOMAIN_PART_FOR_CF }}
+        defaults:
+          run:
+            working-directory: ec2-provision
         name: "Terraform Plan"
         runs-on: ubuntu-latest
         permissions:
             contents: read
             pull-requests: write
+        outputs:
+          public_ip: ${{ steps.public_ip.outputs }}
         steps:
           - name: Checkout
             uses: actions/checkout@v4
@@ -54,13 +42,13 @@ jobs:
               cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
           - name: Init terraform
             run: terraform init
-            id: Init
-
+            id: init
           - id: plan
-            run: terraform plan -no-color
-
+            run: terraform plan -var public_key=$PUBLIC_KEY -var domain_name=$DOMAIN_NAME_FOR_CF -var sub_domain_name=$SUBDOMAIN_PART_FOR_CF -var cloudflare_token=$CLOUDFLARE_TOKEN -no-color
           - id: apply
-            run: terraform apply -no-color
+            run: terraform apply -auto-approve -var public_key=$PUBLIC_KEY -var domain_name=$DOMAIN_NAME_FOR_CF -var sub_domain_name=$SUBDOMAIN_PART_FOR_CF -var cloudflare_token=$CLOUDFLARE_TOKEN-no-color
+          - id: public_ip
+            run: terraform output public_ip_ec2
           - name: Update PR
             if: github.event_name == 'pull_request'
             uses: actions/github-script@v7
@@ -89,5 +77,37 @@ jobs:
                     body: output
                   })
 
-
-                
+    nginx_wordpress:
+          name: provision nginx and wordpress to ec2-provision
+          needs: teraform
+          runs-on: ubuntu-latest
+          permissions:
+            contents: read
+            pull-requests: write
+          steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: rsync to server and deploy
+              env:
+                S_KEY: ${{ secrets.S_KEY }}
+                PUBLIC_IP: needs.terraform.ouputs.public_ip
+                USERNAME_VM: ${{ secrets.USERNAME_EC2 }}
+                PORT_SSH: ${{ secrets.PORT_SSH }}
+                ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
+                DB_NAME: ${{ secrets.DB_NAME }}
+                USERNAME_DB: ${{ secrets.USERNAME_DB }}
+                USERNAME: ${{ secrets.USERNAME }}
+                PASSWORD: ${{ secrets.PASSWORD }}
+                DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+                TITLE: ${{ vars.TITLE }}
+                EMAIL: ${{ secrets.EMAIL }}
+              run: |
+                mkdir .ssh
+                chmod 700 .ssh
+                echo -e "$S_KEY" > ~/.ssh/id_rsa
+                chmod 600 ~/.ssh/id_rsa
+                rsync -avzqR script -e 'ssh -p $PORT_SSH' $USERNAME_VM@$PUBLIC_IP:~/
+                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo mv script /root"
+                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo chown root:root /root/script -R"
+                ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo find /root/script -type f -exec chmod 755 {} +"
+                ssh -p $PORT_SSH $USERNAME_VM@PUBLIC_IP 'sudo coproc script/main.sh -d "$DOMAIN_NAME" -r "$ROOT_PASSWORD" -ud "$USERNAME_DB" -db "$DB_NAME" -t "$TITLE" -u "$USERNAME" -p "$PASSWORD" -e "$EMAIL" >> /home/$USERNAME_VM/log_installation 2>&1'
