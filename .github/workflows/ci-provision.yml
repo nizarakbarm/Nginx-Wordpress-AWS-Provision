@@ -5,6 +5,7 @@ on:
             - opened
             - reopened
         branches:
+            - main
             - develop
             - 'feature/**'
             - 'bugfix/**'
