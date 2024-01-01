@@ -137,6 +137,7 @@ Run this command:
 -d [DOMAIN_NAME] -r [ROOT_PASSWORD] \
 -ud [USERNAME_DB] -db "$DB_NAME" \
 -t [TITLE] -u [USERNAME] \
+
 -p [PASSWORD] -e [EMAIL]
 --github-token [GITHUB_TOKEN] > /root/log_installation 2>&1
 ```
@@ -151,7 +152,67 @@ Run this command:
   - [EMAIL]: Email password for Wordpress
   - [GITHUB_TOKEN]: GITHUB_TOKEN needed for wp package install
 
+
+# Provision by Using GitHub Action
+
 If you want to provision ec2 and Nginx-Wordpress-PHP by using github action you can check my github action inside .github/workflows/ci-provision.yml.
+
+To use my workflow, there are some variables and secrets that need to be defined
+
+
+## Variable
+
+You need to define variable inside your repo settings > Secrets and variables > Actions > choose Variables tab > New repository variable.
+
+All the variable that will be created are:
+
+DOMAIN_NAME: Variable for domain name that will be used by script/main.sh
+
+DOMAIN_NAME_FOR_CF: Variable for root domain name that will be used by cloudflare provider in terraform
+
+SUBDOMAIN_NAME_FOR_CF: Variable for Sub domain name part that will be used by cloudflare provider in terraform
+
+TF_WORKSPACE: Variable to define TF_WORKSPACE
+
+TITLE: Title that will be used by script/main.sh
+
+## Secrets
+
+You need to define variable inside your repo settings > Secrets and variables > Actions > choose Secrets tab > New repository Secret.
+
+All the secrets that will be created are:
+
+CLOUDFLARE_TOKEN: secret for cloudflare token that will be used by terraform
+
+DB_NAME: secret for database name that will be used by script/main.sh for wordpress
+
+EMAIL: secret for email address that will be used by script/main.sh for wordpress
+
+PASSWORD: secret for password that will be used by script/main.sh for wordpress
+
+PORT_SSH: secret for ssh port that of ec2 that will be used for rsync inside workflow
+
+ROOT_PASSWORD: secret for root password database that will be used by script/main.sh
+
+S_KEY: secret for private key that will be used for ssh-agent inside workflow
+
+TF_API_TOKEN: secret for terraform api token that will be used by terraform cli inside workflow
+
+TF_CLOUD_ORGANIZATION: secret for terraform cloud organizatio that will be used by terraform cli inside workflow
+
+USERNAME: secret for username wordpress that will be used by script/main.sh
+
+USERNAME_DB: secret for USERNAME_DB that will be used by script/main.sh
+
+USERNAME_EC2: secret for USERNAME operating system of EC2 vm that will be used by workflow
+
+
+## Triggers of workflow
+
+To use this workflow you need to develop something inside develop branch then create pull request because my workflow using trigger on pull request.
+
+
+
 
 
 
