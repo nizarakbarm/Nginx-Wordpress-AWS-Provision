@@ -207,9 +207,12 @@ USERNAME_DB: secret for USERNAME_DB that will be used by script/main.sh
 USERNAME_EC2: secret for USERNAME operating system of EC2 vm that will be used by workflow
 
 
+Note: Due to the limited lifetime of some tokens, it is necessary to update your token regularly
+
+
 ## Triggers of workflow
 
-To use this workflow you need to develop something inside develop branch then create pull request because my workflow using trigger on pull request.
+To use this workflow, you need to develop something inside the develop branch, then create a pull request because my workflow uses a trigger on pull requests.
 
 
 
