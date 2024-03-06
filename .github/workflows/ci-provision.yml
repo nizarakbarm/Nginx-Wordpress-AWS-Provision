@@ -119,7 +119,7 @@ jobs:
               run: |
                 eval `ssh-agent`
                 ssh-add - <<< "${S_KEY}"
-                echo "Appending ssh-keyscan result to known-hsots"
+                echo "Appending ssh-keyscan result to known-hosts"
                 mkdir ~/.ssh
                 chmod 700 ~/.ssh
                 ssh-keyscan -H -p $PORT_SSH $PUBLIC_IP >> ~/.ssh/known_hosts
@@ -127,6 +127,7 @@ jobs:
                 ls -l ~/.ssh/known_hosts
                 echo -e "Host *\n\tGSSAPIAuthentication yes\n\tServerAliveInterval 600\n\tTCPKeepAlive yes\n\tIPQoS=throughput" > ~/.ssh/config
                 chmod 600 ~/.ssh/config
+                echo "Deploy scripts..."
                 rsync -avzqR script -e "ssh -p ${PORT_SSH}" "$USERNAME_VM@$PUBLIC_IP:~/"
                 [[ $? -ne 0 ]] && echo "Warning: rsync failed!" 
                 ssh -p $PORT_SSH $USERNAME_VM@$PUBLIC_IP "sudo rm -rf /root/script" > /dev/null 2>&1
