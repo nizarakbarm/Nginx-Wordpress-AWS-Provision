@@ -117,6 +117,7 @@ jobs:
               uses: actions/checkout@v4
             - name: deploy using ssh or rsync
               run: |
+                sleep 5
                 eval `ssh-agent`
                 ssh-add - <<< "${S_KEY}"
                 echo "Appending ssh-keyscan result to known-hosts"
