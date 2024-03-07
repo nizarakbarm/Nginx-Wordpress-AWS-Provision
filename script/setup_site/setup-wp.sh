@@ -133,10 +133,10 @@ if [[ $? -ne 0 ]]; then
 fi
 
 export COMPOSER_ALLOW_SUPERUSER=1
-composer config -n -g github-oauth.github.com $GITHUB_TOKEN
+/usr/local/bin/composer config -n -g github-oauth.github.com $GITHUB_TOKEN
 # install  wp-cli-secure and disable-file-editor using wp-secure
 wp --path="$WP_DIR" package install https://github.com/igorhrcek/wp-cli-secure-command.git --allow-root
-composer config -n -g --unset github-oauth.github.com
+/usr/local/bin/composer config -n -g --unset github-oauth.github.com
 unset COMPOSER_ALLOW_SUPERUSER
 wp --path="$WP_DIR" secure disable-file-editor --allow-root
 
